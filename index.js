@@ -94,6 +94,44 @@ app.get('/users',(req,res)=>{
     })
 })
 
+app.post('/users',(re,res)=>{
+  const sql="INSERT INTO users (username, password_hash,email,full_name,date_of_birth,role) values(?)"
+  const values=[
+      re.body.username,
+      re.body.password,
+      re.body.email,
+      re.body.full_name,
+      re.body.date_of_birth,
+      re.body.role
+  ];
+
+  db.query(sql,[values],(err,data)=>{
+      if(err){
+          return res.json('ERROR');
+      }
+      
+      return res.json(data);
+  });
+})
+
+app.post('/login1',(re,res)=>{
+  const user_id = re.body.user_id;
+  const password = re.body.password;
+  const sql="Select * from users where user_id =? and password_hash =?";
+  db.query(sql, [user_id,password],
+  (err,data)=> {
+      if(err){
+          return res.json(err);
+      }
+      if(data.length>0){
+          return res.json("Success");
+      }else{
+          return res.json("Failed")
+      }
+  });
+})
+
+
 
 // Start Server with Error Handling
 const PORT = process.env.PORT || 8804;
