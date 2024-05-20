@@ -4,7 +4,6 @@ import cors from "cors";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import fs from "fs";
-import MongoDBSession from "connect-mongodb-session"
 import bodyParser from "body-parser";
 import crypto from "crypto";
 import session from "express-session";
@@ -37,7 +36,6 @@ const db = mysql.createConnection({
   database: process.env.DB_DATABASE,
 });
 
-const MongoDBStoreInstance = MongoDBSession(session);
 // MongoDB Connection
 const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -80,29 +78,8 @@ const Rates = mongoose.model('Rates',{
 })
 
 
-const store = new MongoDBStoreInstance({
-    uri: mongoURI,
-    collection:'session',
-});
-
-
-
-app.use(
-    session({
-        secret: 'slaves123#',
-        resave: false,
-        saveUninitialized: false,
-        rolling: false,
-        store: store, // Your session store configuration
-        cookie: {
-            secure: true, // Set to true in production with HTTPS
-            maxAge: 30 * 60 * 1000 // 30 minutes expiration
-        }
-    })
-);
-
 // Other middleware and route handlers come after the session middleware
-const sessionStore = store;
+
 
 const storage = multer.diskStorage({
     destination:'uploads',
