@@ -131,6 +131,51 @@ app.post('/login1',(re,res)=>{
   });
 })
 
+app.get('/checkidrole',(req,res)=>{
+  const sql='Select user_id ,role from users where username=? and password_hash=?'
+  const {username, password} = req.query;
+  db.query(sql,[username,password],(err,data)=>{
+      if(err) {
+          console.error('Error fetching Id:', err);
+          return res.status(500).json({error:'Error fetching accounts'});
+      }
+      return res.json(data);
+  })
+})
+
+app.get('/profilecheck', async(req,res)=>{
+  const user_id=req.query.user_id;
+  try{
+      const profile = await Profile.findOne({userid:user_id});
+      if(!profile){
+          return res.json({message:'Could not find the Info'})
+      }
+      //req.session.user = {userName}
+      const {image,activated}=profile;
+      return res.status(200).json({image,activated})
+  }catch(error){
+      console.log(error);
+      return res.status(500).json({error:'Internal Server Error'})
+  }
+})
+
+app.post('/loginconfirmation',async(req,res)=>{
+  const userName=req.body.username;
+  try{
+      const activationToken = await ActivationToken.findOne({userName:userName});
+      if(!activationToken){
+          return res.json({message:'Invalid username or password'})
+      }
+      if(activationToken.activated !== true){
+          return res.status(401).json({error:"Account not validate"})
+      }
+      return res.json({message:"Account validated"})
+  }catch(error){
+      console.log(error);
+      return res.status(500).json({error:'Internal Server Error'})
+  }
+})
+
 app.post('/createprofile',async (req,res)=>{
   const userid=req.body.user_id;
   console.log(userid)
