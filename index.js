@@ -12,6 +12,7 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
+import { get } from "http";
 
 // Configuration
 const __filename = fileURLToPath(import.meta.url);
@@ -77,11 +78,12 @@ const Rates = mongoose.model('Rates',{
     image:{type:String,default:null}
 })
 
+
 app.get('/',(req,res)=>{
     res.send('Server is working')
 })
 
-app.get('/api/users',(re,res)=>{
+app.get('/users',(req,res)=>{
     const sql="Select * from users"
     db.query(sql,(err,data)=>{
         if(err) {
@@ -91,31 +93,6 @@ app.get('/api/users',(re,res)=>{
         return res.json(data);
     })
 })
-
-app.post('/users',(re,res)=>{
-    const sql="INSERT INTO users (username, password_hash,email,full_name,date_of_birth,role) values(?)"
-    const values=[
-        re.body.username,
-        re.body.password,
-        re.body.email,
-        re.body.full_name,
-        re.body.date_of_birth,
-        re.body.role
-    ];
-
-    db.query(sql,[values],(err,data)=>{
-        if(err){
-            return res.json('ERROR');
-        }
-        
-        return res.json(data);
-    });
-})
-
-
-
-
-
 
 
 // Start Server with Error Handling
