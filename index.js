@@ -33,14 +33,7 @@ app.get('/',(req,res)=>{
 })
 
 app.get('/users',(req,res)=>{
-    const sql="Select * from users"
-    db.query(sql,(err,data)=>{
-        if(err) {
-            console.error('Error fetching users:', err);
-            return res.status(500).json({error:'Error fetching users'});
-        }
-        return res.json(data);
-    })
+    res.send('Hello')
 })
 
 app.listen(8804,() => {
