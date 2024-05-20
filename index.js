@@ -131,7 +131,98 @@ app.post('/login1',(re,res)=>{
   });
 })
 
+app.post('/createprofile',async (req,res)=>{
+  const userid=req.body.user_id;
+  console.log(userid)
+  try{
+      const profile = new Profile({userid})
+      await profile.save();
+      res.json({message:"Saved Successfully"})
+  }catch(error){
+      console.error('Error saving profile:', error);
+      res.status(500).json({error:'Internal Server Error'})
+  }
+})
 
+app.post('/activation', async (req,res)=>{
+  const email=req.body.email;
+  const userName=req.body.username;
+  const token=generateActivationToken();
+  console.log('Activation',token)
+  const expireAt= new Date(Date.now()+ 5*60*1000);
+  const activationToken = new ActivationToken({userName,email,token,expireAt})
+  try{
+      await activationToken.save();
+      sendEmail1(email,token)
+      console.log('after sending it ',email)
+      res.json({message:"Activation link sent to your email",token:token})
+  }catch(error){
+      console.error('Error saving activation token:', error);
+      res.status(500).json({error:'Internal Server Error'})
+  }
+})
+
+app.post('/recoverotp', async (req,res)=>{
+  const email=req.body.email;
+  console.log(email)
+  const otp=Math.floor(Math.random() * 9000 + 1000);
+  const expireAt = new Date(Date.now()+60*1000);
+  const security =await Security.findOne({email:email});
+  if(!security){
+      const security = new Security({email:email,recover_pin:otp,expireAt:expireAt})
+      try{
+          await security.save();
+          sendEmail(email,otp);
+          res.status(200).json({message:'Otp code sent to your email address'})
+      }catch(err){
+          console.log('Error saving OTP',err);
+          res.status(500).json({error:"Internal Server Error"})
+      }
+  }else{
+      security.recover_pin=otp;
+      await security.save();
+      res.status(200).json({message:'Otp code sent to your email address'})
+  }
+  
+})
+
+app.post('/activate', async (req,res)=>{
+  const token= req.body.token;
+  console.log('Activated in the backend',token);
+  try{
+      const activationToken = await ActivationToken.findOne({token:token});
+      if(!activationToken){
+          return res.status(400).json({error:'Invalid or expired activation token'})
+      }
+      if(activationToken.expireAt <= new Date(Date.now()+ 5*60*1000)) {
+          return res.status(400).json({error:'Activation token expired'});
+      }
+      activationToken.activated = true;
+      await activationToken.save();
+      //res.redirect('https://localhost:3000/')
+  }catch(error){
+      console.log(error);
+      return res.status(500).json({error:'Internal Server Error'});
+  }
+})
+
+app.post('/createaccount',(re,res)=>{
+  const sql="INSERT INTO accounts (user_id,account_type,full_name,address,country) values(?)"
+  const values=[
+      re.body.user_id,
+      re.body.account_type,
+      re.body.full_name,
+      re.body.address,
+      re.body.country
+  ];
+  console.log(values)
+  db.query(sql,[values],(err,data)=>{
+      if(err){
+          return res.json('ERROR');
+      } 
+      return res.json(data);
+  });
+})
 
 // Start Server with Error Handling
 const PORT = process.env.PORT || 8804;
