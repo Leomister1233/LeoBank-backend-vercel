@@ -11,10 +11,10 @@ app.use(express.json())//important for sending data
 app.use(express.urlencoded({ limit: "25mb" }));
 
 const db=mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Slaves123#',
-    database:'bank'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database:process.env.DB_DATABASE
 })
 
 const mongoURI= process.env.Mongo_URI
@@ -33,7 +33,14 @@ app.get('/',(req,res)=>{
 })
 
 app.get('/users',(req,res)=>{
-    res.send('Hello')
+   const sql="Select * from users"
+    db.query(sql,(err,data)=>{
+        if(err) {
+            console.error('Error fetching users:', err);
+            return res.status(500).json({error:'Error fetching users'});
+        }
+        return res.json(data);
+    })
 })
 
 app.listen(8804,() => {
