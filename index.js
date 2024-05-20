@@ -4,6 +4,7 @@ import cors from "cors";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import fs from "fs";
+import MongoDBSession from "connect-mongodb-session"
 import bodyParser from "body-parser";
 import crypto from "crypto";
 import session from "express-session";
@@ -36,6 +37,7 @@ const db = mysql.createConnection({
   database: process.env.DB_DATABASE,
 });
 
+const MongoDBStoreInstance = MongoDBSession(session);
 // MongoDB Connection
 const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
