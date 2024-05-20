@@ -22,12 +22,18 @@ dotenv.config();
 
 // Express App Setup
 const app = express();
-app.use(cors());
 app.use(express.json()); // Important for sending data
 app.use(express.urlencoded({ limit: "25mb" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+const corsOptions = {
+  origin: 'http://localhost:3000', // Specify your frontend's origin
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 // MySQL Database Connection
 const db = mysql.createConnection({
@@ -107,10 +113,10 @@ app.post('/users',(re,res)=>{
 
   db.query(sql,[values],(err,data)=>{
       if(err){
-          return res.json('ERROR');
+          return res.status(404).json('ERROR');
       }
       
-      return res.json(data);
+      return res.status(200).json(data);
   });
 })
 
