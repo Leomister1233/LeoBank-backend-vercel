@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // Specify your frontend's origin
+  origin: 'https://localhost:3000', // Specify your frontend's origin
   optionsSuccessStatus: 200,
 };
 
