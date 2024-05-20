@@ -11,10 +11,10 @@ app.use(express.json())//important for sending data
 app.use(express.urlencoded({ limit: "25mb" }));
 
 const db=mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database:process.env.DB_DATABASE
+    host: 'localhost',
+    user: 'root',
+    password: 'Slaves123#',
+    database:'bank'
 })
 
 const mongoURI= process.env.Mongo_URI
