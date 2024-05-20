@@ -28,12 +28,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const corsOptions = {
-  origin: 'https://localhost:3000', // Specify your frontend's origin
-  optionsSuccessStatus: 200,
-};
-
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
 
 // MySQL Database Connection
 const db = mysql.createConnection({
