@@ -224,6 +224,40 @@ app.post('/createaccount',(re,res)=>{
   });
 })
 
+app.get('/getaccounts',(req,res) => {
+  const sql="Select * from accounts"
+  db.query(sql,(err,data)=>{
+      if(err) {
+          console.error('Error fetching accounts:', err);
+          return res.status(500).json({error:'Error fetching accounts'});
+      }
+      return res.json(data);
+  })
+})
+
+app.get('/getaccountslimit',(req,res) => {
+  const sql="Select * from accounts ORDER BY created_at DESC LIMIT 5"
+  db.query(sql,(err,data)=>{
+      if(err) {
+          console.error('Error fetching accounts:', err);
+          return res.status(500).json({error:'Error fetching accounts'});
+      }
+      return res.json(data);
+  })
+})
+
+app.get('/showbalance', (req, res) => {
+  const sql='SELECT balance from accounts where account_id=?';
+  const id=req.query.account_id;
+  db.query(sql,[id],(err,data)=>{
+      if(err){
+          console.error('Error getting the balance', err)
+          return res.status(500).json({error:'Error getting the balance'});
+      }
+      return res.json(data)
+  })
+})
+
 // Start Server with Error Handling
 const PORT = process.env.PORT || 8804;
 const server = app.listen(PORT, () => {
