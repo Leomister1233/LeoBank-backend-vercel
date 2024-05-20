@@ -81,7 +81,7 @@ app.get('/',(req,res)=>{
     res.send('Server is working')
 })
 
-app.get('/api/users2',(re,res)=>{
+app.get('/api/users',(re,res)=>{
     const sql="Select * from users"
     db.query(sql,(err,data)=>{
         if(err) {
