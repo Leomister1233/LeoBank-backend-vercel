@@ -28,10 +28,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use(cors({
-    method:["POST","GET"],
-    credentials:true
-}));
+app.use(cors());
 
 // MySQL Database Connection
 const db = mysql.createConnection({
